@@ -1,0 +1,53 @@
+#!/usr/bin/python
+
+print "Content-type:text/plain\r\n\r\n"
+print ''
+
+#We want to be able to sleep but don't need all of time & space, just import sleep
+from time import sleep
+from sys import exit
+#We alos need to use RPi.GPIO but we want to use it as GPIO
+import pigpio as pigpio
+
+pi1 = pigpio.pi()       # pi1 accesses the local Pi's gpios
+
+pi1.write(17, 1) # set local Pi's gpio 4 low
+pi1.write(22, 1) # set tom's gpio 4 to high
+sleep(0.5)
+pi1.write(17, 0) # set local Pi's gpio 4 low
+pi1.write(22, 0) # set tom's gpio 4 to high
+print 'ok'
+exit(0)
+
+#!/usr/bin/python
+
+print "Content-type:text/plain\r\n\r\n"
+print ''
+
+#We want to be able to sleep but don't need all of time & space, just import sleep
+from time import sleep
+from sys import exit
+#We alos need to use RPi.GPIO but we want to use it as GPIO
+import RPi.GPIO as GPIO
+GPIO.setwarnings(False) 
+#Setup the Pi to use BCM mode
+GPIO.setmode(GPIO.BCM)
+#Output the pins 17,18,22,23
+
+GPIO.setup(17,GPIO.OUT)
+GPIO.setup(18,GPIO.OUT)
+GPIO.setup(22,GPIO.OUT)
+GPIO.setup(23,GPIO.OUT)
+
+#All Pins setup!
+#Now lets make the robot spin for 1 second left
+GPIO.output(17,1)
+GPIO.output(22,1)
+sleep(1)
+GPIO.output(17,0)
+GPIO.output(22,0)
+
+#Now lets clean up the GPIO code
+GPIO.cleanup()
+print 'ok'
+exit(0)

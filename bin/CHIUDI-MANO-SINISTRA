@@ -1,0 +1,2 @@
+#!/bin/sh
+irsend SEND_ONCE Robosapienv1 LEFT_ARM_IN

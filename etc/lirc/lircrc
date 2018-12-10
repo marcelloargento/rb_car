@@ -1,0 +1,20 @@
+begin
+ prog = irexec
+ button = KEY_FORWARD
+ config = /var/www/cgi-bin/avanti.py
+end
+begin
+ prog = irexec
+ button = KEY_BACK
+ config = /var/www/cgi-bin/indietro.py
+end
+begin
+ prog = irexec
+ button = KEY_LEFT
+ config = /var/www/cgi-bin/sinistra.py
+end
+begin
+ prog = irexec
+ button = KEY_RIGHT
+ config = /var/www/cgi-bin/destra.py
+end

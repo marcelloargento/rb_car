@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Blockly Demo: JS Interpreter</title>
+  <script type="text/javascript" src="../../storage.js"></script>
+  <script type="text/javascript" src="acorn_interpreter.js"></script>
+  <script type="text/javascript" src="../../blockly_compressed.js"></script>
+  <script type="text/javascript" src="../../blocks_compressed.js"></script>
+  <script type="text/javascript" src="../../javascript_compressed.js"></script>
+  <script type="text/javascript" src="../../msg/js/it.js"></script>
+  <script type="text/javascript" src="../../blocks/robosapien.js"></script>
+  <script type="text/javascript" src="../../generators/javascript/robosapien_js.js"></script>
+  <style>
+    body {
+      background-color: #fff;
+      font-family: sans-serif;
+    }
+    h1 {
+      font-weight: normal;
+      font-size: 140%;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    if ('BlocklyStorage' in window) {
+      BlocklyStorage.HTTPREQUEST_ERROR = 'There was a problem with the request.\n';
+      BlocklyStorage.LINK_ALERT = 'Share your blocks with this link:\n\n%1';
+      BlocklyStorage.HASH_ERROR = 'Sorry, "%1" doesn\'t correspond with any saved Blockly file.';
+      BlocklyStorage.XML_ERROR = 'Could not load your saved file.\n'+
+          'Perhaps it was created with a different version of Blockly?';
+    } else {
+      document.write('<p id="sorry">Sorry, cloud storage is not available.  This demo must be hosted on App Engine.</p>');
+    }
+  </script>
+  <h1><a href="https://developers.google.com/blockly/">Blockly</a> &gt;
+    <a href="../index.html">Demos</a> &gt; JS Interpreter</h1>
+
+  <p>This is a simple demo of executing code wth a sandboxed JavaScript interpreter.</p>
+
+  <p>&rarr; More info on <a href="https://developers.google.com/blockly/installation/js-interpreter">JS Interpreter</a>...</p>
+
+  <p>
+    <button onclick="parseCode()">Parse JavaScript</button>
+    <button onclick="stepCode()" id="stepButton" disabled="disabled">Step JavaScript</button>
+	<button onclick="runCode()" id="runButton">Run JavaScript</button>
+	<button onclick="parseCodeSilently();runCode()" id="startButton">Start</button>
+	<button onclick="BlocklyStorage.link()">Save Blocks</button>
+  </p>
+
+  <div id="blocklyDiv" style="height: 480px; width: 600px;"></div>
+
+  <xml id="toolbox" style="display: none">
+    <category name="Logic">
+      <block type="controls_if"></block>
+      <block type="logic_compare"></block>
+      <block type="logic_operation"></block>
+      <block type="logic_negate"></block>
+      <block type="logic_boolean"></block>
+    </category>
+    <category name="Loops">
+      <block type="controls_repeat_ext">
+        <value name="TIMES">
+          <block type="math_number">
+            <field name="NUM">10</field>
+          </block>
+        </value>
+      </block>
+      <block type="controls_whileUntil"></block>
+    </category>
+    <category name="Math">
+      <block type="math_number"></block>
+      <block type="math_arithmetic"></block>
+      <block type="math_single"></block>
+    </category>
+    <category name="Text">
+      <block type="text"></block>
+      <block type="text_length"></block>
+      <block type="text_print"></block>
+      <block type="text_prompt_ext">
+        <value name="TEXT">
+          <block type="text"></block>
+        </value>
+      </block>
+    </category>
+    <category name="Variables" custom="VARIABLE"></category>
+    <category name="Functions" custom="PROCEDURE"></category>
+	<category name="Robosapien">
+		<category name="Azioni">
+			<block type="robosapien_roar"></block>
+			<block type="robosapien_peto"></block>
+			<block type="robosapien_balla"></block>
+			<block type="robosapien_fermo"></block>
+			<block type="robosapien_wait"></block>
+		</category>
+		<category name="Braccia">
+			<category name="Destro">
+				<block type="robosapien_braccio_destro_su"></block>
+				<block type="robosapien_braccio_destro_giu"></block>
+			</category>
+			<category name="Sinistro">
+				<block type="robosapien_braccio_sinistro_su"></block>
+				<block type="robosapien_braccio_sinistro_giu"></block>
+			</category>
+		</category>
+		<category name="Gambe">
+			<block type="robosapien_passo_avanti"></block>
+			<block type="robosapien_passo_indietro"></block>
+			<block type="robosapien_passo_destra"></block>
+			<block type="robosapien_passo_sinistra"></block>
+		</category>
+		<category name="Programmazione">
+		</category>
+	</category>
+  </xml>
+
+  <xml id="startBlocks" style="display: none">
+    <block type="variables_set" inline="true" x="20" y="20">
+      <field name="VAR">n</field>
+      <value name="VALUE">
+        <block type="math_number">
+          <field name="NUM">1</field>
+        </block>
+      </value>
+      <next>
+        <block type="controls_repeat_ext" inline="true">
+          <value name="TIMES">
+            <block type="math_number">
+              <field name="NUM">4</field>
+            </block>
+          </value>
+          <statement name="DO">
+            <block type="variables_set" inline="true">
+              <field name="VAR">n</field>
+              <value name="VALUE">
+                <block type="math_arithmetic" inline="true">
+                  <field name="OP">MULTIPLY</field>
+                  <value name="A">
+                    <block type="variables_get">
+                      <field name="VAR">n</field>
+                    </block>
+                  </value>
+                  <value name="B">
+                    <block type="math_number">
+                      <field name="NUM">2</field>
+                    </block>
+                  </value>
+                </block>
+              </value>
+            </block>
+          </statement>
+          <next>
+            <block type="text_print" inline="false">
+              <value name="TEXT">
+                <block type="variables_get">
+                  <field name="VAR">n</field>
+                </block>
+              </value>
+            </block>
+          </next>
+        </block>
+      </next>
+    </block>
+  </xml>
+
+  <script>
+    Blockly.inject(document.getElementById('blocklyDiv'),
+        {toolbox: document.getElementById('toolbox')});
+    Blockly.Xml.domToWorkspace(Blockly.mainWorkspace,
+        document.getElementById('startBlocks'));
+
+    var myInterpreter = null;
+
+    function initApi(interpreter, scope) {
+      // Add an API function for the alert() block.
+      var wrapper = function(text) {
+        text = text ? text.toString() : '';
+        return interpreter.createPrimitive(alert(text));
+      };
+      interpreter.setProperty(scope, 'alert',
+          interpreter.createNativeFunction(wrapper));
+
+      // Add an API function for the prompt() block.
+      var wrapper = function(text) {
+        text = text ? text.toString() : '';
+        return interpreter.createPrimitive(prompt(text));
+      };
+      interpreter.setProperty(scope, 'prompt',
+          interpreter.createNativeFunction(wrapper));
+
+      // Add an API function for highlighting blocks.
+      var wrapper = function(id) {
+        id = id ? id.toString() : '';
+        return interpreter.createPrimitive(highlightBlock(id));
+      };
+      interpreter.setProperty(scope, 'highlightBlock',
+          interpreter.createNativeFunction(wrapper));
+
+      // Add an API function for callServer blocks.
+      var wrapper = function(param) {
+        param = param ? param.toString() : '';
+        return interpreter.createPrimitive(callServer(param));
+      };
+      interpreter.setProperty(scope, 'callServer',
+          interpreter.createNativeFunction(wrapper));
+    }
+
+    var highlightPause = false;
+
+    function highlightBlock(id) {
+      Blockly.mainWorkspace.highlightBlock(id);
+      highlightPause = true;
+    }
+
+    function parseCode() {
+      // Generate JavaScript code and parse it.
+      Blockly.JavaScript.STATEMENT_PREFIX = 'highlightBlock(%1);\n';
+      Blockly.JavaScript.addReservedWords('highlightBlock');
+      var code = Blockly.JavaScript.workspaceToCode();
+      myInterpreter = new Interpreter(code, initApi);
+
+      alert('Ready to execute this code:\n\n' + code);
+      document.getElementById('stepButton').disabled = '';
+      highlightPause = false;
+      Blockly.mainWorkspace.traceOn(true);
+      Blockly.mainWorkspace.highlightBlock(null);
+    }
+	function parseCodeSilently() {
+      // Generate JavaScript code and parse it.
+      var code = Blockly.JavaScript.workspaceToCode();
+      myInterpreter = new Interpreter(code, initApi);
+      Blockly.mainWorkspace.traceOn(true);
+      Blockly.mainWorkspace.highlightBlock(null);
+    }
+
+
+    function stepCode() {
+      try {
+        var ok = myInterpreter.step();
+      } finally {
+        if (!ok) {
+          // Program complete, no more code to execute.
+          document.getElementById('stepButton').disabled = 'disabled';
+          return;
+        }
+      }
+      if (highlightPause) {
+        // A block has been highlighted.  Pause execution here.
+        highlightPause = false;
+      } else {
+        // Keep executing until a highlight statement is reached.
+        stepCode();
+      }
+    }
+	function runCode() {
+      try {
+        var ok = myInterpreter.run();
+      } finally {
+        if (!ok) {
+          // Program complete, no more code to execute.
+          document.getElementById('stepButton').disabled = 'disabled';
+          return;
+        }
+      }
+    }
+	function loadXMLDoc(){
+		Blockly.mainWorkspace.highlightBlock(null);
+		var code = Blockly.JavaScript.workspaceToCode();
+		var xmlhttp;
+		var arr=code.split(";");
+		for (var i=0; i < arr.length; i++){
+			alert(encodeURI(arr[i]));
+		}
+
+		
+		if (window.XMLHttpRequest)
+		  {// code for IE7+, Firefox, Chrome, Opera, Safari
+		  xmlhttp=new XMLHttpRequest();
+		  }
+		else
+		  {// code for IE6, IE5
+		  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+		  }
+		xmlhttp.onreadystatechange=function()
+		  {
+		  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+			{
+			alert('response:'+xmlhttp.responseText+'<-');
+			}
+		  else
+			{
+			alert('readyState:'+xmlhttp.readyState);
+				alert('status:'+xmlhttp.status);
+			}
+		  }
+
+		xmlhttp.open("GET","/cgi-bin/hello2.sh",false);
+		xmlhttp.send();
+		alert("ritorno da send");
+
+	}
+	function callServer(param){
+		//alert(param)
+		if (window.XMLHttpRequest)
+		  {// code for IE7+, Firefox, Chrome, Opera, Safari
+		  xmlhttp=new XMLHttpRequest();
+		  }
+		else
+		  {// code for IE6, IE5
+		  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+		  }
+		xmlhttp.onreadystatechange=function()
+		  {
+		  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+			{
+			//alert('response:'+xmlhttp.responseText+'<-');
+			}
+		  else
+			{
+				//alert('readyState:'+xmlhttp.readyState);
+			}
+		  }
+
+		//xmlhttp.open("GET","/cgi-bin/"+param+".sh",true);
+		
+		xmlhttp.open("GET","/cgi-bin/"+param,false);
+		xmlhttp.send();
+	}
+</script>
+
+</body>
+</html>
